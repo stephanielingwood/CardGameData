@@ -1,0 +1,1 @@
+This is a simple version of the card game War, with an added array (in the WinHistory class) to track the history of who has won.

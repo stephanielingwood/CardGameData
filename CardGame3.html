@@ -1,0 +1,192 @@
+<script>
+
+var debug = false
+
+//create class of cards
+	function Card(rank, suit) {
+		this.rank = rank;
+		this.suit = suit;
+		this.show = function() {
+			console.log(this.rank + " of " + this.suit);
+		}
+	}
+
+//create class of decks
+//s passes a value in for suit
+//r passes a value in for rank
+	function Deck() {
+		this.cards = [];
+		this.count = function() {
+			return this.cards.length;
+		}
+		this.init = function() {
+			for (s = 1; s <= 4; s++) {
+				for (r = 1; r <= 13; r++) {
+					this.cards.push(new Card(r,s));
+				}
+			}
+		}
+	}	
+
+//create class of players
+	function Player() {
+		this.name = name;
+		this.hand = [];
+		this.points = 0
+		this.count = function() {
+			return this.hand.length;
+		}
+		this.askName = function() {
+			this.name = prompt("Please type your name:");
+		}
+	}
+
+//create class of game and winner
+    function GameWinner(gameNumber, winner) {
+        this.gameNumber = gameNumber
+        this.winner = winner
+    }
+
+//create class of win history
+    function WinHistory(gameNumber, winner) {
+        this.list = []
+        this.showWins = function() {
+            console.log("Game Winners:");
+            for (var i = 1; i <= this.list.length; i++) {
+                console.log("Game " + this.list[i-1].gameNumber + " winner: " + this.list[i-1].winner);
+            }
+        }
+    }
+
+//make a deck and add cards to it
+	stdDeck = new Deck();
+	stdDeck.init();
+
+	if (debug = true) {
+    	console.log(stdDeck.cards[33].rank + " of " + stdDeck.cards[33].suit);
+    	for (var showMe = 0; showMe < stdDeck.cards.length; showMe++) {
+    		console.log(stdDeck.cards[showMe].rank);
+    	}
+	}  
+
+//create discard deck
+	discard = new Deck();
+
+//create two players
+	player1 = new Player();
+	player2 = new Player();
+
+//create win history
+    wins = new WinHistory();
+
+//do/while loop for deciding whether to play again
+	keepPlaying = true
+    var game = 0
+
+	var replay = false
+
+	alert("Get ready to play!");
+
+    alert("Let's find out who the first player is.");
+    player1.askName();
+    if (debug = true) {
+        console.log(player1.name);            
+    }
+
+    alert("Okay, let's find out who the second player is.");
+    player2.askName();
+    if (debug = true) {
+        console.log(player2.name);            
+    }   
+
+	do {
+		if (replay = true) {
+			player1.points = 0
+			player2.points = 0
+            game++
+		}
+
+//pass cards from the deck in to the hands of the players		
+		while (player1.hand.length <= 25) {
+			player1.hand.push(stdDeck.cards[Math.floor(Math.random() * stdDeck.count())]);
+		}
+		while (player2.hand.length <= 25) {
+			player2.hand.push(stdDeck.cards[Math.floor(Math.random() * stdDeck.count())]);
+		}
+
+    	if (debug = true) {
+    		console.log(player1.hand[25].rank + " of " + player1.hand[25].suit);
+    	}
+
+//game logic for War; winner of each round gets a point, and used cards are returned to the discard pile.
+		while (player1.hand.length != 0 || player2.hand.length != 0) {
+			var p1Card = player1.hand.shift();
+			var p2Card = player2.hand.shift();
+			if (debug = true) {
+				console.log(p1Card.rank);
+				console.log(p1Card.suit);
+				console.log(p2Card.rank);
+				console.log(p2Card.suit);
+			}
+
+			if (p1Card.rank > p2Card.rank) {
+				console.log("Player 1 played " + p1Card.rank + " of " + p1Card.suit + "; Player 2 played " + p2Card.rank + " of " + p2Card.suit + ". Player 1 gets a point!");
+				discard.cards.push(p1Card);
+				discard.cards.push(p2Card);
+				player1.points++
+			}
+			else if (p2Card.rank > p1Card.rank) {
+				console.log("Player 1 played " + p1Card.rank + " of " + p1Card.suit + "; Player 2 played " + p2Card.rank + " of " + p2Card.suit + ". Player 2 gets a point!");
+				discard.cards.push(p1Card);
+				discard.cards.push(p2Card);
+				player2.points++
+			}
+			else if (p1Card.rank == p2Card.rank) {
+				console.log("Player 1 played " + p1Card.rank + " of " + p1Card.suit + "; Player 2 played " + p2Card.rank + " of " + p2Card.suit + ". You tied!");
+				discard.cards.push(p1Card);
+				discard.cards.push(p2Card);
+			}
+		}
+
+		if (player1.points < player2.points) {
+			console.log("Player 2 wins the game, with " + player2.points + " points!");
+            thisWinner = new GameWinner(game, player2.name);
+            wins.list.push(thisWinner);            
+		}
+		else if (player2.points < player1.points) {
+			console.log("Player 1 wins the game, with " + player1.points + " points!");
+            thisWinner = new GameWinner(game, player1.name);
+            wins.list.push(thisWinner);  
+		}
+		else {
+			console.log("Wow! You tied.");
+            thisWinner = new GameWinner(game, "Tied");
+            wins.list.push(thisWinner);              
+		}
+
+        wins.showWins();
+    
+
+//do/while loop to evaluate whether to play again
+		okResponse = true
+
+		do {
+			var playMore = prompt("Thanks for playing! Play again? Type yes or no.");
+			if (playMore === "yes") {
+				alert("Okay, let's play again!");
+				okResponse = false
+				replay = true
+			}
+			else if (playMore === "no") {
+				alert("Have a great day, card-players!");
+				okResponse = false
+				keepPlaying = false
+			}
+			else {
+				alert("Looks like you didn't type yes or no.");
+			}
+		} while(okResponse);
+
+	} while(keepPlaying);
+
+</script>
